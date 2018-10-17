@@ -4,7 +4,6 @@
 " @Created      : 2010-10-03
 " @Last Modified: Tue 13. Sep 2011 20:52:57 +0200 CEST
 " @Revision     : 0.4
-" vi: ft=vim:tw=80:sw=4:ts=4:fdm=marker
 
 if v:version > 702
 	if has('python3')
@@ -28,17 +27,6 @@ if ! exists('b:did_ftplugin')
 	setlocal comments=fb:*,b:#,fb:-
 	setlocal commentstring=#\ %s
 	setlocal conceallevel=2 concealcursor=nc
-	" original emacs settings are: setlocal tabstop=6 shiftwidth=6, but because
-	" of checkbox indentation the following settings are used:
-	setlocal tabstop=6 shiftwidth=6
-	if exists('g:org_tag_column')
-		exe 'setlocal textwidth='.g:org_tag_column
-	else
-		setlocal textwidth=77
-	endif
-
-	" expand tab for counting level of checkbox
-	setlocal expandtab
 
 	" enable % for angle brackets < >
 	setlocal matchpairs+=<:>
