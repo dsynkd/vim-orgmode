@@ -26,16 +26,10 @@ endif
 "        If there is any other good solution, please help fix it.
 "  \\\\*sinuate*
 if (s:conceal_aggressively == 1)
-   syntax region org_bold      matchgroup=org_border_bold start="[^ \\]\zs\*\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\*\|\(^\|[^\\]\)\@<=\*\S\@="     end="[^ \\]\zs\*\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\*\|[^\\]\zs\*\S\@="  concealends oneline
-   syntax region org_italic    matchgroup=org_border_ital start="[^ \\]\zs\/\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\/\|\(^\|[^\\]\)\@<=\/\S\@="     end="[^ \\]\zs\/\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\/\|[^\\]\zs\/\S\@="  concealends oneline
-   syntax region org_underline matchgroup=org_border_undl start="[^ \\]\zs_\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs_\|\(^\|[^\\]\)\@<=_\S\@="        end="[^ \\]\zs_\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs_\|[^\\]\zs_\S\@="     concealends oneline
    syntax region org_code      matchgroup=org_border_code start="[^ \\]\zs=\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs=\|\(^\|[^\\]\)\@<==\S\@="        end="[^ \\]\zs=\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs=\|[^\\]\zs=\S\@="     concealends oneline
    syntax region org_code      matchgroup=org_border_code start="[^ \\]\zs`\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs`\|\(^\|[^\\]\)\@<=`\S\@="        end="[^ \\]\zs'\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs'\|[^\\]\zs'\S\@="     concealends oneline
    syntax region org_verbatim  matchgroup=org_border_verb start="[^ \\]\zs\~\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\~\|\(^\|[^\\]\)\@<=\~\S\@="     end="[^ \\]\zs\~\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\~\|[^\\]\zs\~\S\@="  concealends oneline
 else
-    syntax region org_bold      start="\S\zs\*\|\*\S\@="     end="\S\zs\*\|\*\S\@="  keepend oneline
-    syntax region org_italic    start="\S\zs\/\|\/\S\@="     end="\S\zs\/\|\/\S\@="  keepend oneline
-    syntax region org_underline start="\S\zs_\|_\S\@="       end="\S\zs_\|_\S\@="    keepend oneline
     syntax region org_code      start="\S\zs=\|=\S\@="       end="\S\zs=\|=\S\@="    keepend oneline
     syntax region org_code      start="\S\zs`\|`\S\@="       end="\S\zs'\|'\S\@="    keepend oneline
     syntax region org_verbatim  start="\S\zs\~\|\~\S\@="     end="\S\zs\~\|\~\S\@="  keepend oneline
@@ -43,12 +37,10 @@ endif
 
 hi def org_bold      term=bold      cterm=bold      gui=bold
 hi def org_italic    term=italic    cterm=italic    gui=italic
-hi def org_underline term=underline cterm=underline gui=underline
 
 if (s:conceal_aggressively == 1)
     hi link org_border_bold org_bold
     hi link org_border_ital org_italic
-    hi link org_border_undl org_underline
 endif
 
 " Headings: {{{1
@@ -69,7 +61,7 @@ endif
 unlet! s:i s:j s:contains
 let s:i = 1
 let s:j = len(g:org_heading_highlight_colors)
-let s:contains = ' contains=org_timestamp,org_timestamp_inactive,org_subtask_percent,org_subtask_number,org_subtask_percent_100,org_subtask_number_all,org_list_checkbox,org_bold,org_italic,org_underline,org_code,org_verbatim'
+let s:contains = ' contains=org_timestamp,org_timestamp_inactive,org_subtask_percent,org_subtask_number,org_subtask_percent_100,org_subtask_number_all,org_list_checkbox,org_bold,org_italic,org_code,org_verbatim'
 if g:org_heading_shade_leading_stars == 1
 	let s:contains = s:contains . ',org_shade_stars'
 	syntax match org_shade_stars /^\*\{2,\}/me=e-1 contained
@@ -305,7 +297,7 @@ hi def link org_list_unordered Identifier
 syntax match org_list_def /.*\s\+::/ contained
 hi def link org_list_def PreProc
 
-syntax match org_list_item /.*$/ contained contains=org_subtask_percent,org_subtask_number,org_subtask_percent_100,org_subtask_number_all,org_list_checkbox,org_bold,org_italic,org_underline,org_code,org_verbatim,org_timestamp,org_timestamp_inactive,org_list_def
+syntax match org_list_item /.*$/ contained contains=org_subtask_percent,org_subtask_number,org_subtask_percent_100,org_subtask_number_all,org_list_checkbox,org_bold,org_italic,org_code,org_verbatim,org_timestamp,org_timestamp_inactive,org_list_def
 syntax match org_list_checkbox /\[[ X-]]/ contained
 hi def link org_list_bullet Identifier
 hi def link org_list_checkbox     PreProc
