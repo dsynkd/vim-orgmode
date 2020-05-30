@@ -26,21 +26,9 @@ endif
 "        If there is any other good solution, please help fix it.
 "  \\\\*sinuate*
 if (s:conceal_aggressively == 1)
-   syntax region org_code      matchgroup=org_border_code start="[^ \\]\zs=\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs=\|\(^\|[^\\]\)\@<==\S\@="        end="[^ \\]\zs=\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs=\|[^\\]\zs=\S\@="     concealends oneline
-   syntax region org_code      matchgroup=org_border_code start="[^ \\]\zs`\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs`\|\(^\|[^\\]\)\@<=`\S\@="        end="[^ \\]\zs'\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs'\|[^\\]\zs'\S\@="     concealends oneline
-   syntax region org_verbatim  matchgroup=org_border_verb start="[^ \\]\zs\~\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\~\|\(^\|[^\\]\)\@<=\~\S\@="     end="[^ \\]\zs\~\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs\~\|[^\\]\zs\~\S\@="  concealends oneline
+   syntax region org_code      matchgroup=org_border_code start="[^ \\]\zs`\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs`\|\(^\|[^\\]\)\@<=`\S\@="        end="[^ \\]\zs`\|\(\(^\|[^\\]\)\zs\(\\\\\)\+\)\zs`\|[^\\]\zs`\S\@="     concealends oneline
 else
-    syntax region org_code      start="\S\zs=\|=\S\@="       end="\S\zs=\|=\S\@="    keepend oneline
-    syntax region org_code      start="\S\zs`\|`\S\@="       end="\S\zs'\|'\S\@="    keepend oneline
-    syntax region org_verbatim  start="\S\zs\~\|\~\S\@="     end="\S\zs\~\|\~\S\@="  keepend oneline
-endif
-
-hi def org_bold      term=bold      cterm=bold      gui=bold
-hi def org_italic    term=italic    cterm=italic    gui=italic
-
-if (s:conceal_aggressively == 1)
-    hi link org_border_bold org_bold
-    hi link org_border_ital org_italic
+    syntax region org_code      start="\S\zs`\|`\S\@="       end="\S\zs`\|`\S\@="    keepend oneline
 endif
 
 " Headings: {{{1
@@ -56,26 +44,6 @@ endif
 if !exists('g:org_heading_shade_leading_stars')
 	let g:org_heading_shade_leading_stars = 1
 endif
-
-" Enable Syntax HL: {{{2
-unlet! s:i s:j s:contains
-let s:i = 1
-let s:j = len(g:org_heading_highlight_colors)
-let s:contains = ' contains=org_timestamp,org_timestamp_inactive,org_subtask_percent,org_subtask_number,org_subtask_percent_100,org_subtask_number_all,org_list_checkbox,org_bold,org_italic,org_code,org_verbatim'
-if g:org_heading_shade_leading_stars == 1
-	let s:contains = s:contains . ',org_shade_stars'
-	syntax match org_shade_stars /^\*\{2,\}/me=e-1 contained
-	hi def link org_shade_stars Ignore
-else
-	hi clear org_shade_stars
-endif
-
-while s:i <= g:org_heading_highlight_levels
-	exec 'syntax match org_heading' . s:i . ' /^\*\{' . s:i . '\}\s.*/' . s:contains
-	exec 'hi def link org_heading' . s:i . ' ' . g:org_heading_highlight_colors[(s:i - 1) % s:j]
-	let s:i += 1
-endwhile
-unlet! s:i s:j s:contains
 
 " Todo Keywords: {{{1
 " Load Settings: {{{2
@@ -270,11 +238,7 @@ syntax match hyperlinkURL				    contained "[^][]*\]\[" conceal
 syntax match hyperlinkBracketsRight	contained "\]\{2}"     conceal
 hi def link hyperlink Underlined
 
-" Comments: {{{1
-syntax match org_comment /^#.*/
-hi def link org_comment Comment
-
-" Bullet Lists: {{{1
+" Bullet Lists:
 " Ordered Lists:
 " 1. list item
 " 1) list item
@@ -288,8 +252,12 @@ hi def link org_list_ordered Identifier
 " * list item
 " + list item
 " + and - don't need a whitespace prefix
-syn match org_list_unordered "^\(\s*[-+]\|\s\+\*\)\(\s\|$\)" nextgroup=org_list_item
+syn match org_list_unordered "^\(\s*[-*+]\|\s\+\*\)\(\s\|$\)"
 hi def link org_list_unordered Identifier
+
+" Comments:
+syntax match org_comment /#.*/
+hi def link org_comment Comment
 
 " Definition Lists:
 " - Term :: expl.
@@ -304,29 +272,7 @@ hi def link org_list_checkbox     PreProc
 
 " Block Delimiters: {{{1
 syntax case ignore
-syntax match  org_block_delimiter /^#+BEGIN_.*/
-syntax match  org_block_delimiter /^#+END_.*/
-syntax match  org_key_identifier  /^#+[^ ]*:/
-syntax match  org_title           /^#+TITLE:.*/  contains=org_key_identifier
-hi def link org_block_delimiter Comment
-hi def link org_key_identifier  Comment
-hi def link org_title           Title
-
-" Block Markup: {{{1
-" we consider all BEGIN/END sections as 'verbatim' blocks (inc. 'quote', 'verse', 'center')
-" except 'example' and 'src' which are treated as 'code' blocks.
-" Note: the non-standard '>' prefix is supported for quotation lines.
-" Note: the '^:.*" rule must be defined before the ':PROPERTIES:' one below.
-" TODO: http://vim.wikia.com/wiki/Different_syntax_highlighting_within_regions_of_a_file
-syntax match  org_verbatim /^\s*>.*/
-syntax match  org_code     /^\s*:.*/
-
-syntax region org_verbatim start="^\s*#+BEGIN_.*"      end="^\s*#+END_.*"      keepend contains=org_block_delimiter
-syntax region org_code     start="^\s*#+BEGIN_SRC"     end="^\s*#+END_SRC"     keepend contains=org_block_delimiter
-syntax region org_code     start="^\s*#+BEGIN_EXAMPLE" end="^\s*#+END_EXAMPLE" keepend contains=org_block_delimiter
-
 hi def link org_code     String
-hi def link org_verbatim String
 
 if (s:conceal_aggressively==1)
     hi link org_border_code     org_code
@@ -350,26 +296,5 @@ hi def link org_subtask_number String
 hi def link org_subtask_percent String
 hi def link org_subtask_percent_100 Identifier
 hi def link org_subtask_number_all Identifier
-
-" Plugin SyntaxRange: {{{1
-" This only works if you have SyntaxRange installed:
-" https://github.com/vim-scripts/SyntaxRange
-
-" BEGIN_SRC
-if exists('g:loaded_SyntaxRange')
-  call SyntaxRange#Include('#+BEGIN_SRC vim', '#+END_SRC', 'vim', 'comment')
-  call SyntaxRange#Include('#+BEGIN_SRC python', '#+END_SRC', 'python', 'comment')
-  call SyntaxRange#Include('#+BEGIN_SRC c', '#+END_SRC', 'c', 'comment')
-  " cpp must be below c, otherwise you get c syntax hl for cpp files
-  call SyntaxRange#Include('#+BEGIN_SRC cpp', '#+END_SRC', 'cpp', 'comment')
-  call SyntaxRange#Include('#+BEGIN_SRC ruby', '#+END_SRC', 'ruby', 'comment')
-  " call SyntaxRange#Include('#+BEGIN_SRC lua', '#+END_SRC', 'lua', 'comment')
-  " call SyntaxRange#Include('#+BEGIN_SRC lisp', '#+END_SRC', 'lisp', 'comment')
-
-  " LaTeX
-  call SyntaxRange#Include('\\begin[.*]{.*}', '\\end{.*}', 'tex')
-  call SyntaxRange#Include('\\begin{.*}', '\\end{.*}', 'tex')
-  call SyntaxRange#Include('\\\[', '\\\]', 'tex')
-endif
 
 " vi: ft=vim:tw=80:sw=4:ts=4:fdm=marker
